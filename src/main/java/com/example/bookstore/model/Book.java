@@ -5,43 +5,32 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.math.BigDecimal;
-import lombok.Data;
-import org.jetbrains.annotations.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
-@Data
+@Table(name = "books")
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull
+
+    @Column(nullable = false)
     private String title;
 
-    @NotNull
+    @Column(nullable = false)
     private String author;
 
-    @NotNull
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String isbn;
 
-    @NotNull
+    @Column(nullable = false)
     private BigDecimal price;
 
     private String description;
     private String coverImage;
-
-    public Book(String title, String author, String isbn, BigDecimal bigDecimal,
-                String description, String coverImage) {
-        this.title = title;
-        this.author = author;
-        this.isbn = isbn;
-        this.price = bigDecimal;
-        this.description = description;
-        this.coverImage = coverImage;
-    }
-
-    public Book() {
-
-    }
 }

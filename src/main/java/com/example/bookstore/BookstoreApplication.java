@@ -18,24 +18,13 @@ public class BookstoreApplication {
     @Bean
     CommandLineRunner runner(BookService bookService) {
         return args -> {
-            bookService.save(new Book(
-                    "Clean Code",
-                    "Robert C. Martin",
-                    "9780132350884",
-                    new BigDecimal("37.59"),
-                    "A book that tells how to write clean code.",
-                    "https://example.com/cleancode.jpg"
-            ));
-
-            bookService.save(new Book(
-                    "Effective Java",
-                    "Joshua Bloch",
-                    "9780134685991",
-                    new BigDecimal("26.43"),
-                    "Best practices for the Java platform.",
-                    "https://example.com/effectivejava.jpg"
-            ));
-
+            bookService.findAll();
+            Book book = new Book();
+            book.setTitle("Effective Java");
+            book.setAuthor("Joshua Bloch");
+            book.setIsbn("9780134685991");
+            book.setPrice(BigDecimal.valueOf(26.43));
+            bookService.save(book);
             System.out.println("Books in the store:");
             bookService.findAll().forEach(System.out::println);
         };
