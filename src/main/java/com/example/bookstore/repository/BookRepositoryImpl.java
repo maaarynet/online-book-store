@@ -1,10 +1,7 @@
 package com.example.bookstore.repository;
 
-import com.example.bookstore.dto.BookDto;
-import com.example.bookstore.dto.CreateBookRequestDto;
 import com.example.bookstore.exception.DataProcessingException;
 import com.example.bookstore.exception.EntityNotFoundException;
-import com.example.bookstore.mapper.BookMapper;
 import com.example.bookstore.model.Book;
 import java.util.List;
 import java.util.Optional;
@@ -18,11 +15,9 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class BookRepositoryImpl implements BookRepository {
     private final SessionFactory sessionFactory;
-    private final BookMapper bookMapper;
 
     @Override
-    public BookDto createBook(CreateBookRequestDto bookDto) {
-        Book book = bookMapper.toModel(bookDto);
+    public Book save(Book book) {
         Transaction transaction = null;
         Session session = null;
         try {
@@ -30,8 +25,7 @@ public class BookRepositoryImpl implements BookRepository {
             transaction = session.beginTransaction();
             session.persist(book);
             transaction.commit();
-            Book savedBook = book;
-            return bookMapper.toDto(savedBook);
+            return book;
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
