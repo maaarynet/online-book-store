@@ -1,0 +1,62 @@
+databaseChangeLog:
+  - changeSet:
+      id: 5
+      author: Maria
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
+                  name: email
+                  value: user@gmail.com
+              - column:
+                  name: password
+                  value: $2y$10$kiv0ko2W.9iJ/DW6yJNV2OmHcjC/PsszJmuUkau2pQUeYt6wzsclO
+              - column:
+                  name: first_name
+                  value: user
+              - column:
+                  name: last_name
+                  value: user
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 2
+              - column:
+                  name: email
+                  value: admin@gmail.com
+              - column:
+                  name: password
+                  value: $2y$10$dIebQItnZhxM4K.ymGzW0.FkEYm47XHYv1yft38MpK1GR36s4jhfW
+              - column:
+                  name: first_name
+                  value: admin
+              - column:
+                  name: last_name
+                  value: admin
+
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: user_id
+                  valueNumeric: 1
+              - column:
+                  name: role_id
+                  valueNumeric: 2
+
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: user_id
+                  valueNumeric: 2
+              - column:
+                  name: role_id
+                  valueNumeric: 1
