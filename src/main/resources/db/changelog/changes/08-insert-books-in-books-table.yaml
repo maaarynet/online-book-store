@@ -1,0 +1,77 @@
+databaseChangeLog:
+  - changeSet:
+      id: 8
+      author: Maria
+      changes:
+        - insert:
+            tableName: books
+            columns:
+              - column: {name: id, valueNumeric: 1}
+              - column: {name: title, value: "Pride and Prejudice"}
+              - column: {name: author, value: "Jane Austen"}
+              - column: {name: isbn, value: "9780141439518"}
+              - column: {name: price, value: 8.99}
+              - column:
+                  name: description
+                  value: "A classic novel of manners, following the emotional development of Elizabeth Bennet."
+              - column: {name: cover_image, value: "https://example.com/pride-and-prejudice-cover.jpg"}
+              - column: {name: is_deleted, valueBoolean: false}
+        - insert:
+            tableName: books
+            columns:
+              - column: {name: id, valueNumeric: 2}
+              - column: {name: title, value: "The Silent Patient"}
+              - column: {name: author, value: "Alex Michaelides"}
+              - column: {name: isbn, value: "9781250301697"}
+              - column: {name: price, value: 13.99}
+              - column:
+                  name: description
+                  value: "A shocking psychological thriller of a woman’s act of violence against her husband—and of the therapist obsessed with uncovering her motive."
+              - column: {name: cover_image, value: "https://example.com/the-silent-patient-cover.jpg"}
+              - column: {name: is_deleted, valueBoolean: false}
+        - insert:
+            tableName: books
+            columns:
+              - column: {name: id, valueNumeric: 3}
+              - column: {name: title, value: "Killing Floor"}
+              - column: {name: author, value: "Lee Child"}
+              - column: {name: isbn, value: "9780515153651"}
+              - column: {name: price, value: 9.99}
+              - column:
+                  name: description
+                  value: "The first novel in the Jack Reacher series. A former military policeman is arrested for murder in a small Georgia town."
+              - column: {name: cover_image, value: "https://example.com/killing-floor-cover.jpg"}
+              - column: {name: is_deleted, valueBoolean: false}
+        - insert:
+            tableName: books
+            columns:
+              - column: {name: id, valueNumeric: 4}
+              - column: {name: title, value: "Dune"}
+              - column: {name: author, value: "Frank Herbert"}
+              - column: {name: isbn, value: "9780441013593"}
+              - column: {name: price, value: 14.99}
+              - column:
+                  name: description
+                  value: "The story of Paul Atreides, a brilliant young man born into a great destiny, who must travel to the most dangerous planet in the universe."
+              - column: {name: cover_image, value: "https://example.com/dune-cover-image.jpg"}
+              - column: {name: is_deleted, valueBoolean: false}
+        - insert:
+            tableName: books_categories
+            columns:
+              - column: {name: book_id, valueNumeric: 1}
+              - column: {name: category_id, valueNumeric: 1}
+        - insert:
+            tableName: books_categories
+            columns:
+              - column: {name: book_id, valueNumeric: 2}
+              - column: {name: category_id, valueNumeric: 2}
+        - insert:
+            tableName: books_categories
+            columns:
+              - column: {name: book_id, valueNumeric: 3}
+              - column: {name: category_id, valueNumeric: 3}
+        - insert:
+            tableName: books_categories
+            columns:
+              - column: {name: book_id, valueNumeric: 4}
+              - column: {name: category_id, valueNumeric: 4}
