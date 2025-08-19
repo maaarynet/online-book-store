@@ -2,6 +2,7 @@ package com.example.bookstore.security;
 
 import com.example.bookstore.dto.user.UserLoginRequestDto;
 import com.example.bookstore.dto.user.UserLoginResponseDto;
+import com.example.bookstore.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,5 +22,10 @@ public class AuthenticationService {
                 )
         );
         return new UserLoginResponseDto(jwtUtil.generateToken(authentication.getName()));
+    }
+
+    public Long getUserId(Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return user.getId();
     }
 }

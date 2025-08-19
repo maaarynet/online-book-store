@@ -9,7 +9,6 @@ public class CartItemRequestDto {
     @NotNull
     @Positive
     private Long bookId;
-    @NotNull
     @Positive
     private int quantity;
 }

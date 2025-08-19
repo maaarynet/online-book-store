@@ -12,6 +12,7 @@ import com.example.bookstore.model.User;
 import com.example.bookstore.repository.cartitem.CartItemRepository;
 import com.example.bookstore.repository.shoppingcart.ShoppingCartRepository;
 import jakarta.transaction.Transactional;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -37,13 +38,21 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(id)
                 .orElseThrow(() -> new EntityNotFoundException("Couldn't find a shopping cart "
                         + "with id: " + id));
-        CartItem cartItem = cartItemMapper.toModel(requestDto);
-        cartItem.setShoppingCart(shoppingCart);
-        shoppingCart.getCartItems().add(cartItem);
-        cartItemRepository.save(cartItem);
+        Optional<CartItem> existingItem = shoppingCart.getCartItems()
+                .stream()
+                .filter(item -> item.getBook().getId().equals(requestDto.getBookId()))
+                .findFirst();
+        if (existingItem.isPresent()) {
+            CartItem cartItem = existingItem.get();
+            int newQuantity = cartItem.getQuantity() + requestDto.getQuantity();
+            cartItem.setQuantity(newQuantity);
+        } else {
+            CartItem newCartItem = cartItemMapper.toModel(requestDto);
+            newCartItem.setShoppingCart(shoppingCart);
+            shoppingCart.getCartItems().add(newCartItem);
+        }
         return shoppingCartMapper.toResponseDto(
                 shoppingCartRepository.save(shoppingCart));
-
     }
 
     @Override

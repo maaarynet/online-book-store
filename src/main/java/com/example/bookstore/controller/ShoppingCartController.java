@@ -3,7 +3,7 @@ package com.example.bookstore.controller;
 import com.example.bookstore.dto.cartitem.CartItemRequestDto;
 import com.example.bookstore.dto.cartitem.UpdateCartItemDto;
 import com.example.bookstore.dto.shoppingcart.ShoppingCartResponseDto;
-import com.example.bookstore.model.User;
+import com.example.bookstore.security.AuthenticationService;
 import com.example.bookstore.service.ShoppingCartService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -26,14 +26,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/cart")
 public class ShoppingCartController {
     private final ShoppingCartService shoppingCartService;
+    private final AuthenticationService authenticationService;
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Get the shopping cart of the user")
     @GetMapping
     public ShoppingCartResponseDto getCart(Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
-        Long userId = user.getId();
-        return shoppingCartService.getCart(userId);
+        return shoppingCartService.getCart(authenticationService.getUserId(authentication));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
@@ -42,9 +41,8 @@ public class ShoppingCartController {
     @ResponseStatus(HttpStatus.CREATED)
     public ShoppingCartResponseDto addItem(Authentication authentication,
                                        @RequestBody @Valid CartItemRequestDto requestItem) {
-        User user = (User) authentication.getPrincipal();
-        Long userId = user.getId();
-        return shoppingCartService.addItem(userId, requestItem);
+        return shoppingCartService.addItem(authenticationService.getUserId(authentication),
+                requestItem);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
@@ -53,9 +51,8 @@ public class ShoppingCartController {
     public ShoppingCartResponseDto updateQuantity(Authentication authentication,
                                                   @PathVariable Long cartItemId,
                                                   @RequestBody @Valid UpdateCartItemDto itemDto) {
-        User user = (User) authentication.getPrincipal();
-        Long userId = user.getId();
-        return shoppingCartService.updateQuantity(userId, cartItemId, itemDto);
+        return shoppingCartService.updateQuantity(authenticationService.getUserId(authentication),
+                cartItemId, itemDto);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
@@ -63,9 +60,7 @@ public class ShoppingCartController {
     @DeleteMapping("/items/{cartItemId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteItem(Authentication authentication, @PathVariable Long cartItemId) {
-        User user = (User) authentication.getPrincipal();
-        Long userId = user.getId();
-        shoppingCartService.deleteItem(userId, cartItemId);
+        shoppingCartService.deleteItem(authenticationService.getUserId(authentication), cartItemId);
     }
 
 }
