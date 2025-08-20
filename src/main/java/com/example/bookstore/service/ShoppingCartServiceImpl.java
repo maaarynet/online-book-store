@@ -56,26 +56,22 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public ShoppingCartResponseDto updateQuantity(Long id,
+    public ShoppingCartResponseDto updateQuantity(Long userId,
                                                   Long cartItemId,
                                                   UpdateCartItemDto itemDto) {
-        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(id)
-                .orElseThrow(() -> new EntityNotFoundException("Couldn't find a shopping cart "
-                        + "with id: " + id));
-        CartItem cartItem = shoppingCart.getCartItems().stream()
-                .filter(item -> item.getId().equals(cartItemId))
-                .findFirst().orElseThrow(() -> new EntityNotFoundException("Couldn't find a cart "
-                       + "item with id " + cartItemId + " in shopping cart with id: " + id));
+        CartItem cartItem = cartItemRepository.findByIdAndShoppingCartUserId(cartItemId, userId)
+                .orElseThrow(() -> new EntityNotFoundException("Couldn't find a cart item with id "
+                        + cartItemId + " and user id: " + userId));
         cartItemMapper.updateCartItemFromDto(cartItem, itemDto);
-        return shoppingCartMapper.toResponseDto(shoppingCart);
+        return shoppingCartMapper.toResponseDto(cartItem.getShoppingCart());
     }
 
     @Override
     public void deleteItem(Long userId, Long cartItemId) {
         CartItem cartItem = cartItemRepository.findByIdAndShoppingCartUserId(cartItemId, userId)
                 .orElseThrow(()
-                        -> new EntityNotFoundException("Could not find CartItem with id: "
-                        + cartItemId + " and User id: " + userId));
+                        -> new EntityNotFoundException("Could not find cart item with id: "
+                        + cartItemId + " and user id: " + userId));
         cartItemRepository.delete(cartItem);
     }
 
