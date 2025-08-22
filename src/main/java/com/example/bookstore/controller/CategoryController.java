@@ -5,6 +5,7 @@ import com.example.bookstore.dto.category.CategoryResponseDto;
 import com.example.bookstore.dto.category.CreateCategoryRequestDto;
 import com.example.bookstore.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Category management",
+        description = "Endpoints for managing categories")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/categories")

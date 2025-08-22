@@ -47,6 +47,12 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(OrderProcessingException.class)
+    public ResponseEntity<?> handleOrderProcessingException(OrderProcessingException ex) {
+        return new ResponseEntity<>("Order processing exception occurred",
+                HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleAllExceptions(Exception ex) {
         return new ResponseEntity<>("An unexpected error occurred",
