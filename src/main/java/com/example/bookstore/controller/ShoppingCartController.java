@@ -6,6 +6,7 @@ import com.example.bookstore.dto.shoppingcart.ShoppingCartResponseDto;
 import com.example.bookstore.security.AuthenticationService;
 import com.example.bookstore.service.ShoppingCartService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Shopping cart management",
+        description = "Endpoints for managing users` shopping carts")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/cart")
