@@ -8,9 +8,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+@Accessors(chain = true)
 @Getter
 @Setter
 @Entity
@@ -25,6 +27,7 @@ public class Category {
     @Column(nullable = false)
     private String name;
 
+    @Column(columnDefinition = "VARCHAR(255)")
     private String description;
 
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
