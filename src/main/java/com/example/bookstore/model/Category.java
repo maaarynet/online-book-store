@@ -30,6 +30,6 @@ public class Category {
     @Column(columnDefinition = "VARCHAR(255)")
     private String description;
 
-    @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    @Column(nullable = false)
     private boolean isDeleted;
 }

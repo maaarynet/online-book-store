@@ -19,6 +19,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -58,7 +59,7 @@ class BookRepositoryTest {
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
     )
     @Sql(
-            scripts = "classpath:db/book/delete-all-from-tables.sql",
+            scripts = "classpath:db/delete-all-from-tables.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     void findAllByCategories_Id_WhenCategoryHasBooks_ShouldReturnPageOfBooks() {
@@ -66,12 +67,10 @@ class BookRepositoryTest {
 
         Page<Book> actualPage = bookRepository.findAllByCategories_Id(SCI_FI_CATEGORY_ID, pageable);
 
-        assertEquals(EXPECTED_SCI_FI_BOOK_COUNT, actualPage.getTotalElements());
-        List<String> bookTitles = actualPage.getContent().stream()
-                .map(Book::getTitle)
-                .toList();
-        assertTrue(bookTitles.contains(DUNE_TITLE));
-        assertTrue(bookTitles.contains(FOUNDATION_TITLE));
+        assertThat(actualPage.getContent())
+                .hasSize(EXPECTED_SCI_FI_BOOK_COUNT)
+                .extracting(Book::getTitle)
+                .containsExactlyInAnyOrder(DUNE_TITLE, FOUNDATION_TITLE);
     }
 
     @Test
@@ -81,7 +80,7 @@ class BookRepositoryTest {
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
     )
     @Sql(
-            scripts = "classpath:db/book/delete-all-from-tables.sql",
+            scripts = "classpath:db/delete-all-from-tables.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     void findAllByCategories_Id_WhenCategoryDoesNotExist_ShouldReturnEmptyPage() {
@@ -89,7 +88,6 @@ class BookRepositoryTest {
 
         Page<Book> actualPage = bookRepository.findAllByCategories_Id(NON_EXISTENT_CATEGORY_ID, pageable);
 
-        assertEquals(0, actualPage.getTotalElements());
-        assertTrue(actualPage.isEmpty());
+        assertThat(actualPage).isEmpty();
     }
 }

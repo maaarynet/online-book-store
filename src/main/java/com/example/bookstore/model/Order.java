@@ -53,6 +53,6 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<OrderItem> orderItems = new HashSet<>();
 
-    @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    @Column(nullable = false)
     private boolean isDeleted;
 }

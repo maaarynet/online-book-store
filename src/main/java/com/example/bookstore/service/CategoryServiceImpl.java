@@ -45,6 +45,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Page<BookDtoWithoutCategoryIds> getBooksByCategoryId(Long id, Pageable pageable) {
+        if (!categoryRepository.existsById(id)) {
+            throw new EntityNotFoundException("Category with id " + id + " not found.");
+        }
         return bookRepository.findAllByCategories_Id(id, pageable)
                 .map(bookMapper::toDtoWithoutCategories);
     }
@@ -61,6 +64,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteCategory(Long id) {
+        if (!categoryRepository.existsById(id)) {
+            throw new EntityNotFoundException("Cannot delete category. No category found with id: "
+                    + id);
+        }
         categoryRepository.deleteById(id);
     }
 }

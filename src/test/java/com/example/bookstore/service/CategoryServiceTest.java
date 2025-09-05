@@ -75,7 +75,7 @@ class CategoryServiceTest {
 
         assertNotNull(actual);
         assertEquals(categoryResponseDto, actual);
-        verify(categoryRepository, times(1)).save(category);
+        verify(categoryRepository).save(category);
     }
 
     @Test
@@ -130,6 +130,8 @@ class CategoryServiceTest {
     @Test
     @DisplayName("Get books by a valid category ID should return a page of book DTOs")
     void getBooksByCategoryId_WithValidId_ShouldReturnBookPage() {
+        when(categoryRepository.existsById(VALID_CATEGORY_ID)).thenReturn(true);
+
         Page<Book> bookPage = new PageImpl<>(List.of(book), pageable, 1);
         when(bookRepository.findAllByCategories_Id(VALID_CATEGORY_ID, pageable)).thenReturn(bookPage);
         when(bookMapper.toDtoWithoutCategories(book)).thenReturn(bookDtoWithoutCategoryIds);
@@ -156,8 +158,8 @@ class CategoryServiceTest {
 
         assertNotNull(actual);
         assertEquals(expectedResponseDto, actual);
-        verify(categoryMapper, times(1)).updateFromCategoryDto(updateRequestDto, categoryFromDb);
-        verify(categoryRepository, times(1)).save(categoryFromDb);
+        verify(categoryMapper).updateFromCategoryDto(updateRequestDto, categoryFromDb);
+        verify(categoryRepository).save(categoryFromDb);
     }
 
     @Test
@@ -176,15 +178,21 @@ class CategoryServiceTest {
     @Test
     @DisplayName("Delete a category by a valid ID should call deleteById")
     void deleteCategory_WithValidId_ShouldCallRepository() {
+        when(categoryRepository.existsById(VALID_CATEGORY_ID)).thenReturn(true);
         categoryServiceImpl.deleteCategory(VALID_CATEGORY_ID);
-        verify(categoryRepository, times(1)).deleteById(VALID_CATEGORY_ID);
+        verify(categoryRepository).deleteById(VALID_CATEGORY_ID);
     }
 
     @Test
     @DisplayName("Delete a category by an invalid ID should complete without error")
     void deleteCategory_WithInvalidId_ShouldCompleteWithoutError() {
-        doNothing().when(categoryRepository).deleteById(INVALID_CATEGORY_ID);
-        assertDoesNotThrow(() -> categoryServiceImpl.deleteCategory(INVALID_CATEGORY_ID));
-        verify(categoryRepository, times(1)).deleteById(INVALID_CATEGORY_ID);
+        when(categoryRepository.existsById(INVALID_CATEGORY_ID)).thenReturn(false);
+        EntityNotFoundException exception = assertThrows(
+                EntityNotFoundException.class,
+                () -> categoryServiceImpl.deleteCategory(INVALID_CATEGORY_ID)
+        );
+        assertEquals("Cannot delete category. No category found with id: "
+                + INVALID_CATEGORY_ID, exception.getMessage());
+        verify(categoryRepository, never()).deleteById(any());
     }
 }

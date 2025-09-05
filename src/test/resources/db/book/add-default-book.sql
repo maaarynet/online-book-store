@@ -1,0 +1,2 @@
+INSERT INTO books (id, title, author, isbn, price, description, is_deleted)
+VALUES (1, 'The Great Gatsby', 'F. Scott Fitzgerald', '978-0743273565', 15.99, 'A story of the fabulously wealthy Jay Gatsby.', false);

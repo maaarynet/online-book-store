@@ -72,7 +72,7 @@ class BookServiceTest {
 
         assertNotNull(actual);
         assertEquals(bookDto, actual);
-        verify(bookRepository, times(1)).save(book);
+        verify(bookRepository).save(book);
     }
 
     @Test
@@ -88,7 +88,7 @@ class BookServiceTest {
         assertFalse(actualPage.isEmpty());
         assertEquals(1, actualPage.getTotalElements());
         assertEquals(bookDto, actualPage.getContent().get(0));
-        verify(bookRepository, times(1)).findAll(pageable);
+        verify(bookRepository).findAll(pageable);
     }
 
     @Test
@@ -113,7 +113,7 @@ class BookServiceTest {
         BookDto actual = bookServiceImpl.getBookById(VALID_BOOK_ID);
 
         assertEquals(bookDto, actual);
-        verify(bookRepository, times(1)).findById(VALID_BOOK_ID);
+        verify(bookRepository).findById(VALID_BOOK_ID);
     }
 
     @Test
@@ -144,8 +144,8 @@ class BookServiceTest {
 
         assertNotNull(actual);
         assertEquals(expectedResponseDto, actual);
-        verify(bookMapper, times(1)).updateBookFromDto(updateRequestDto, bookFromDb);
-        verify(bookRepository, times(1)).save(bookFromDb);
+        verify(bookMapper).updateBookFromDto(updateRequestDto, bookFromDb);
+        verify(bookRepository).save(bookFromDb);
     }
 
     @Test
@@ -169,7 +169,7 @@ class BookServiceTest {
 
         bookServiceImpl.deleteBook(VALID_BOOK_ID);
 
-        verify(bookRepository, times(1)).delete(book);
+        verify(bookRepository).delete(book);
     }
 
     @Test
