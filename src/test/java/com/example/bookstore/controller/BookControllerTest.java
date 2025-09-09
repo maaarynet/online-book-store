@@ -1,11 +1,27 @@
 package com.example.bookstore.controller;
 
+import static com.example.bookstore.util.TestUtil.createBookUpdateRequestDto;
+import static com.example.bookstore.util.TestUtil.createBooksForAuthorSearch;
+import static com.example.bookstore.util.TestUtil.createDefaultBookDto;
+import static com.example.bookstore.util.TestUtil.createDefaultBookRequestDto;
+import static com.example.bookstore.util.TestUtil.createInvalidRequestBookDto;
+import static com.example.bookstore.util.TestUtil.createListOfTwoBookDtos;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.example.bookstore.dto.book.BookDto;
 import com.example.bookstore.dto.book.CreateBookRequestDto;
 import com.example.bookstore.model.Book;
 import com.example.bookstore.repository.book.BookRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.math.BigDecimal;
+import java.util.List;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,16 +34,8 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import static com.example.bookstore.util.TestUtil.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-@Sql(scripts = "classpath:db/delete-all-from-tables.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+@Sql(scripts = "classpath:db/delete-all-from-tables.sql",
+        executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
@@ -66,7 +74,8 @@ public class BookControllerTest {
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        BookDto actual = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), BookDto.class);
+        BookDto actual = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
+                BookDto.class);
         assertThat(actual)
                 .usingRecursiveComparison()
                 .ignoringFields("id", "categoryIds")
@@ -89,7 +98,8 @@ public class BookControllerTest {
     @Test
     @DisplayName("Get all books with pagination")
     @WithMockUser(username = "user", roles = "USER")
-    @Sql(scripts = "classpath:db/book/add-two-books.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:db/book/add-two-books.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void getAllBooks_ReturnsValidPage() throws Exception {
         List<BookDto> expected = createListOfTwoBookDtos();
 
@@ -99,7 +109,9 @@ public class BookControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String content = objectMapper.readTree(result.getResponse().getContentAsString()).get("content").toString();
+        String content = objectMapper.readTree(
+                result.getResponse().getContentAsString()
+        ).get("content").toString();
         List<BookDto> actualBooks = objectMapper.readValue(content, new TypeReference<>() {});
         assertThat(actualBooks)
                 .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
@@ -110,7 +122,8 @@ public class BookControllerTest {
     @Test
     @DisplayName("Get a book by valid id")
     @WithMockUser(username = "user", roles = "USER")
-    @Sql(scripts = "classpath:db/book/add-default-book.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:db/book/add-default-book.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void getBookById_WithValidId_ReturnsBookDto() throws Exception {
         BookDto expected = createDefaultBookDto();
 
@@ -118,7 +131,8 @@ public class BookControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        BookDto actual = objectMapper.readValue(result.getResponse().getContentAsString(), BookDto.class);
+        BookDto actual = objectMapper.readValue(result.getResponse().getContentAsString(),
+                BookDto.class);
         assertThat(actual)
                 .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
                         .withComparatorForType(BigDecimal::compareTo, BigDecimal.class).build())
@@ -174,7 +188,8 @@ public class BookControllerTest {
     @Test
     @DisplayName("Delete a book with valid id should return NoContent status")
     @WithMockUser(username = "admin", roles = "ADMIN")
-    @Sql(scripts = "classpath:db/book/add-default-book.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:db/book/add-default-book.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void deleteBook_WithValidId_ReturnsNoContent() throws Exception {
         mockMvc.perform(delete(BOOK_ID_URL, BOOK_ID).with(csrf()))
                 .andExpect(status().isNoContent());
@@ -192,7 +207,8 @@ public class BookControllerTest {
     @Test
     @DisplayName("Search for books by author")
     @WithMockUser(username = "user", roles = "USER")
-    @Sql(scripts = "classpath:db/book/add-books-for-search-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:db/book/add-books-for-search-test.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void searchBooks_ReturnsValidPage() throws Exception {
         List<BookDto> expected = createBooksForAuthorSearch();
         MvcResult result = mockMvc.perform(get(BOOK_SEARCH_URL)
@@ -200,7 +216,9 @@ public class BookControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String content = objectMapper.readTree(result.getResponse().getContentAsString()).get("content").toString();
+        String content = objectMapper.readTree(
+                result.getResponse().getContentAsString()
+        ).get("content").toString();
         List<BookDto> actual = objectMapper.readValue(content, new TypeReference<>() {});
 
         assertThat(actual)

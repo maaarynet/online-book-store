@@ -8,7 +8,6 @@ import com.example.bookstore.dto.category.CategoryResponseDto;
 import com.example.bookstore.dto.category.CreateCategoryRequestDto;
 import com.example.bookstore.model.Book;
 import com.example.bookstore.model.Category;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;

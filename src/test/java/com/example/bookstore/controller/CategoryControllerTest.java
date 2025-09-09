@@ -1,5 +1,19 @@
 package com.example.bookstore.controller;
 
+import static com.example.bookstore.util.TestUtil.createCategoryUpdateRequestDto;
+import static com.example.bookstore.util.TestUtil.createDefaultBookWithoutCategoryIdsDto;
+import static com.example.bookstore.util.TestUtil.createDefaultCategoryRequestDto;
+import static com.example.bookstore.util.TestUtil.createDefaultCategoryResponseDto;
+import static com.example.bookstore.util.TestUtil.createInvalidRequestCategoryDto;
+import static com.example.bookstore.util.TestUtil.createListOfTwoCategoryDtos;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.example.bookstore.dto.book.BookDtoWithoutCategoryIds;
 import com.example.bookstore.dto.category.CategoryResponseDto;
 import com.example.bookstore.dto.category.CreateCategoryRequestDto;
@@ -7,6 +21,7 @@ import com.example.bookstore.model.Category;
 import com.example.bookstore.repository.category.CategoryRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +33,8 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.List;
-
-import static com.example.bookstore.util.TestUtil.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-@Sql(scripts = "classpath:db/delete-all-from-tables.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+@Sql(scripts = "classpath:db/delete-all-from-tables.sql",
+        executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @SpringBootTest
 @AutoConfigureMockMvc
 public class CategoryControllerTest {
@@ -58,8 +66,8 @@ public class CategoryControllerTest {
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        CategoryResponseDto actual = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
-                CategoryResponseDto.class);
+        CategoryResponseDto actual = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(), CategoryResponseDto.class);
         assertThat(actual)
                 .usingRecursiveComparison()
                 .ignoringFields("id")
@@ -73,7 +81,8 @@ public class CategoryControllerTest {
         mockMvc.perform(post(CATEGORY_URL)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createInvalidRequestCategoryDto())))
+                        .content(objectMapper
+                                .writeValueAsString(createInvalidRequestCategoryDto())))
                 .andExpect(status().isBadRequest());
     }
 
@@ -91,8 +100,11 @@ public class CategoryControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String content = objectMapper.readTree(result.getResponse().getContentAsString()).get("content").toString();
-        List<CategoryResponseDto> actual = objectMapper.readValue(content, new TypeReference<>() {});
+        String content = objectMapper.readTree(
+                result.getResponse().getContentAsString()
+        ).get("content").toString();
+        List<CategoryResponseDto> actual = objectMapper.readValue(content,
+                new TypeReference<>() {});
         assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
     }
 
@@ -110,8 +122,8 @@ public class CategoryControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        CategoryResponseDto actual = objectMapper.readValue(result.getResponse().getContentAsString(),
-                CategoryResponseDto.class);
+        CategoryResponseDto actual = objectMapper.readValue(
+                result.getResponse().getContentAsString(), CategoryResponseDto.class);
         assertThat(actual).isEqualTo(expected);
     }
 
@@ -129,8 +141,10 @@ public class CategoryControllerTest {
     @Sql(scripts = {
             "classpath:db/delete-all-from-tables.sql",
             "classpath:db/category/add-book-with-category.sql"
-    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)    void getAllBooksByCategory_WithValidId_ReturnsValidData() throws Exception {
-        List<BookDtoWithoutCategoryIds> expected = List.of(createDefaultBookWithoutCategoryIdsDto());
+    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    void getAllBooksByCategory_WithValidId_ReturnsValidData() throws Exception {
+        List<BookDtoWithoutCategoryIds> expected = List.of(
+                createDefaultBookWithoutCategoryIdsDto());
 
         MvcResult result = mockMvc.perform(get(BOOKS_BY_CATEGORY_ID_URL, CATEGORY_ID)
                         .param("page", "0")
@@ -138,8 +152,11 @@ public class CategoryControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String content = objectMapper.readTree(result.getResponse().getContentAsString()).get("content").toString();
-        List<BookDtoWithoutCategoryIds> actual = objectMapper.readValue(content, new TypeReference<>() {});
+        String content = objectMapper.readTree(
+                result.getResponse().getContentAsString()
+        ).get("content").toString();
+        List<BookDtoWithoutCategoryIds> actual = objectMapper.readValue(content,
+                new TypeReference<>() {});
         assertThat(actual).isEqualTo(expected);
     }
 
@@ -156,7 +173,8 @@ public class CategoryControllerTest {
     @Test
     @DisplayName("Update a category with valid data")
     @WithMockUser(username = "admin", roles = "ADMIN")
-    @Sql(scripts = "classpath:db/category/add-default-category.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:db/category/add-default-category.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void updateCategory_WithValidId_ReturnsCategoryResponseDto() throws Exception {
         CreateCategoryRequestDto requestDto = createCategoryUpdateRequestDto();
 
@@ -178,7 +196,8 @@ public class CategoryControllerTest {
         mockMvc.perform(put(CATEGORY_ID_URL, INVALID_CATEGORY_ID)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createDefaultCategoryRequestDto())))
+                        .content(objectMapper
+                                .writeValueAsString(createDefaultCategoryRequestDto())))
                 .andExpect(status().isNotFound());
     }
 

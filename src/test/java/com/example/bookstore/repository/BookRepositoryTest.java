@@ -1,5 +1,7 @@
 package com.example.bookstore.repository;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.example.bookstore.model.Book;
 import com.example.bookstore.repository.book.BookRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -16,12 +18,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @Testcontainers
@@ -41,6 +37,9 @@ class BookRepositoryTest {
             .withUsername("user")
             .withPassword("password");
 
+    @Autowired
+    private BookRepository bookRepository;
+
     @DynamicPropertySource
     static void setDatasourceProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", mysql::getJdbcUrl);
@@ -49,11 +48,9 @@ class BookRepositoryTest {
         registry.add("spring.datasource.driver-class-name", mysql::getDriverClassName);
     }
 
-    @Autowired
-    private BookRepository bookRepository;
-
     @Test
-    @DisplayName("findAllByCategories_Id: Positive case - should return books for an existing category")
+    @DisplayName("findAllByCategories_Id: Positive case -"
+            + " should return books for an existing category")
     @Sql(
             scripts = "classpath:db/book/add-books-for-category-test.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
@@ -74,7 +71,8 @@ class BookRepositoryTest {
     }
 
     @Test
-    @DisplayName("findAllByCategories_Id: Negative case - should return an empty page for a non-existent category")
+    @DisplayName("findAllByCategories_Id: Negative case "
+            + "- should return an empty page for a non-existent category")
     @Sql(
             scripts = "classpath:db/book/add-books-for-category-test.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
@@ -86,7 +84,8 @@ class BookRepositoryTest {
     void findAllByCategories_Id_WhenCategoryDoesNotExist_ShouldReturnEmptyPage() {
         Pageable pageable = PageRequest.of(PAGE_NUMBER, PAGE_SIZE);
 
-        Page<Book> actualPage = bookRepository.findAllByCategories_Id(NON_EXISTENT_CATEGORY_ID, pageable);
+        Page<Book> actualPage = bookRepository.findAllByCategories_Id(NON_EXISTENT_CATEGORY_ID,
+                pageable);
 
         assertThat(actualPage).isEmpty();
     }

@@ -1,5 +1,21 @@
 package com.example.bookstore.service;
 
+import static com.example.bookstore.util.TestUtil.createCategoryUpdateRequestDto;
+import static com.example.bookstore.util.TestUtil.createDefaultBook;
+import static com.example.bookstore.util.TestUtil.createDefaultBookWithoutCategoryIdsDto;
+import static com.example.bookstore.util.TestUtil.createDefaultCategory;
+import static com.example.bookstore.util.TestUtil.createDefaultCategoryRequestDto;
+import static com.example.bookstore.util.TestUtil.createDefaultCategoryResponseDto;
+import static com.example.bookstore.util.TestUtil.createUpdatedCategoryDto;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.example.bookstore.dto.book.BookDtoWithoutCategoryIds;
 import com.example.bookstore.dto.category.CategoryResponseDto;
 import com.example.bookstore.dto.category.CreateCategoryRequestDto;
@@ -10,6 +26,8 @@ import com.example.bookstore.model.Book;
 import com.example.bookstore.model.Category;
 import com.example.bookstore.repository.book.BookRepository;
 import com.example.bookstore.repository.category.CategoryRepository;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,13 +39,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
-import java.util.Optional;
-
-import static com.example.bookstore.util.TestUtil.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CategoryServiceTest {
@@ -133,10 +144,12 @@ class CategoryServiceTest {
         when(categoryRepository.existsById(VALID_CATEGORY_ID)).thenReturn(true);
 
         Page<Book> bookPage = new PageImpl<>(List.of(book), pageable, 1);
-        when(bookRepository.findAllByCategories_Id(VALID_CATEGORY_ID, pageable)).thenReturn(bookPage);
+        when(bookRepository.findAllByCategories_Id(VALID_CATEGORY_ID, pageable))
+                .thenReturn(bookPage);
         when(bookMapper.toDtoWithoutCategories(book)).thenReturn(bookDtoWithoutCategoryIds);
 
-        Page<BookDtoWithoutCategoryIds> actualPage = categoryServiceImpl.getBooksByCategoryId(VALID_CATEGORY_ID, pageable);
+        Page<BookDtoWithoutCategoryIds> actualPage = categoryServiceImpl
+                .getBooksByCategoryId(VALID_CATEGORY_ID, pageable);
 
         assertNotNull(actualPage);
         assertEquals(1, actualPage.getTotalElements());
@@ -150,11 +163,13 @@ class CategoryServiceTest {
         CategoryResponseDto expectedResponseDto = createUpdatedCategoryDto(VALID_CATEGORY_ID);
         Category categoryFromDb = createDefaultCategory();
 
-        when(categoryRepository.findById(VALID_CATEGORY_ID)).thenReturn(Optional.of(categoryFromDb));
+        when(categoryRepository.findById(VALID_CATEGORY_ID)).thenReturn(
+                Optional.of(categoryFromDb));
         when(categoryRepository.save(categoryFromDb)).thenReturn(categoryFromDb);
         when(categoryMapper.toDto(categoryFromDb)).thenReturn(expectedResponseDto);
 
-        CategoryResponseDto actual = categoryServiceImpl.updateCategory(VALID_CATEGORY_ID, updateRequestDto);
+        CategoryResponseDto actual = categoryServiceImpl.updateCategory(VALID_CATEGORY_ID,
+                updateRequestDto);
 
         assertNotNull(actual);
         assertEquals(expectedResponseDto, actual);
@@ -169,7 +184,8 @@ class CategoryServiceTest {
 
         EntityNotFoundException exception = assertThrows(
                 EntityNotFoundException.class,
-                () -> categoryServiceImpl.updateCategory(INVALID_CATEGORY_ID, createCategoryRequestDto)
+                () -> categoryServiceImpl.updateCategory(INVALID_CATEGORY_ID,
+                        createCategoryRequestDto)
         );
         assertEquals("Category not found with id: " + INVALID_CATEGORY_ID, exception.getMessage());
         verify(categoryRepository, never()).save(any());
