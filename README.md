@@ -179,20 +179,21 @@ Several interesting technical challenges were addressed during the development o
 
 ## Using the API with Postman
 
-To test the API endpoints with a tool like Postman, you can automatically generate a collection from the OpenAPI specification.
+To make testing the API as easy as possible, a complete Postman collection is publicly available. You can view the collection in your browser and fork it directly into your own Postman client using the link below.
 
-*   **Start the Application**: Ensure the Spring Boot application is running locally.
-*   **Import the Collection in Postman**:
-    1.  Open Postman and click `Import`.
-    2.  Select the `Link` tab and enter the URL for the OpenAPI specification:
-        ```
-        http://localhost:8080/v3/api-docs
-        ```
-    3.  Postman will automatically parse the specification and create a new collection with all the API endpoints.
-*   **Handling Authentication**:
-    1.  First, use the `POST /auth/login` endpoint with a valid user's credentials to obtain a JWT from the response body.
-    2.  For any protected endpoint (e.g., `GET /cart`), go to the `Authorization` tab, select `Bearer Token` as the type, and paste the JWT into the "Token" field.
+**[-> View the Public Postman Collection <-](https://www.postman.com/orbital-module-physicist-9886908/online-bookstore-project/collection/9v1y8eu/openapi-definition)**
 
+### How to Use the Collection
+
+1.  **Open the Link and Fork**: Click the link above. On the Postman webpage that opens, click the "Run in Postman" or "Fork" button to import the collection into your own client.
+2.  **Start the Application**: Ensure the Spring Boot application is running locally (e.g., with `docker-compose up`).
+3.  **Authenticate**:
+    *   In the imported collection, find the `auth` folder and run the `POST Login a user...` request with valid credentials.
+    *   Copy the `token` from the response body.
+4.  **Test Protected Endpoints**:
+    *   For any other request (like `GET Get all books...`), go to the `Authorization` tab.
+    *   Set the **Type** to `Bearer Token`.
+    *   Paste the copied token into the **Token** field and send the request.
 ## Testing
 
 The project is equipped with a robust testing suite to ensure reliability and correctness of the business logic.
