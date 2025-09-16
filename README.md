@@ -125,7 +125,7 @@ Follow these steps to set up and run the project on your local machine.
 
 1.  **Clone the Repository**
     ```bash
-    git clone https://github.com/your-username/online-book-store.git
+    git clone https://github.com/maaarynet/online-book-store.git
     cd online-book-store
     ```
 
@@ -146,7 +146,7 @@ Follow these steps to set up and run the project on your local machine.
         ```bash
         ./mvnw spring-boot:run
         ```
-    *   The API will be running and available at `http://localhost:8080`.
+    *   The API will be running and available at `http://localhost:8080/api`.
 
 ## API Functionality and Endpoints
 
@@ -159,7 +159,7 @@ The API is organized around REST principles, with different controllers responsi
 *   **Order Controller (`/orders`)**: Allows users to place orders and view their history. Includes admin functions for managing orders.
 
 Once the application is running, a complete, interactive API documentation is available via Swagger UI at:
-**[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)**
+**http://localhost:8080/api/swagger-ui.html**
 
 ## Challenges and Solutions
 
